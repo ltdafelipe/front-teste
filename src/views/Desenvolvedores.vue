@@ -34,14 +34,26 @@
                   :headers="headers"
                   :items="arrayDesenvolvedores"
                   :search="busca"
+                  :loading="loaderTabela"
                   no-data-text="Não há desenvolvedores a serem exibidos"
                   :page.sync="page"
                   :items-per-page="itemsPerPage"
                   hide-default-footer
                   @page-count="pageCount = $event"
                 >
+                  <template v-slot:item.sexo="{ item }">
+                    {{ item.sexo === "M" ? "Masculino" : "Feminino" }}
+                  </template>
                   <template v-slot:item.datanascimento="{ item }">
                     {{ item.datanascimento | data }}
+                  </template>
+                  <template v-slot:item.acao="{ item }">
+                    <v-icon class="mr-2" @click="editarDesenvolvedor(item)">
+                      mdi-pencil
+                    </v-icon>
+                    <v-icon color="red" @click="excluirDesenvolvedor(item)">
+                      mdi-trash-can
+                    </v-icon>
                   </template>
                   <v-alert
                     slot="no-results"
@@ -119,17 +131,22 @@ export default {
       dialogEditar: false,
       dialogExcluir: false,
       itemExclusao: null,
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 30,
       busca: "",
       snack: false,
       snackColor: "",
       snackText: "",
       arrayDesenvolvedores: [],
+      loaderTabela: false,
       headers: [
         {
           text: "Nome",
           align: "left",
           sortable: false,
           value: "nome",
+          width: "350px",
         },
         {
           text: "Sexo",
@@ -141,10 +158,10 @@ export default {
           text: "Idade",
           align: "left",
           sortable: false,
-          value: "sexo",
+          value: "idade",
         },
         {
-          text: "Data nascimento",
+          text: "Data de nascimento",
           align: "left",
           sortable: false,
           value: "datanascimento",
@@ -159,8 +176,18 @@ export default {
     };
   },
 
+  mounted() {
+    this.consultaDesenvolvedores();
+  },
+
   methods: {
-    consultaDesenvolvedores() {},
+    consultaDesenvolvedores() {
+      this.loaderTabela = true;
+      this.$http.get(`${process.env.VUE_APP_API_URL}developers`).then((res) => {
+        this.arrayDesenvolvedores = res.data;
+        this.loaderTabela = false;
+      });
+    },
 
     criarNovoDesenvolvedor() {
       this.dialogCriar = true;
@@ -183,11 +210,13 @@ export default {
 
     atualizaEditarArray() {
       this.criarAlerta("success", "Desenvolvedor atualizado com sucesso!");
+      this.dialogEditar = false;
       this.consultaDesenvolvedores();
     },
 
     atualizaArray() {
       this.criarAlerta("success", "Desenvolvedor cadastrado com sucesso!");
+      this.dialogCriar = false;
       this.consultaDesenvolvedores();
     },
 
@@ -202,8 +231,15 @@ export default {
 
     async confirmaExclusao() {
       // Confirma exclusão do desenvolvedor
-
-      this.criarAlerta("success", "Desenvolvedor excluído com sucesso!");
+      this.$http
+        .delete(
+          `${process.env.VUE_APP_API_URL}developers/` + this.itemExclusao._id
+        )
+        .then(() => {
+          this.criarAlerta("success", "Desenvolvedor excluído com sucesso!");
+          this.consultaDesenvolvedores();
+          this.dialogExcluir = false;
+        });
     },
 
     criarAlerta(color, mensagem) {
