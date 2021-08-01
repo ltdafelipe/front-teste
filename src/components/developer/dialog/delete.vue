@@ -3,18 +3,18 @@
     <v-card color="primary darken-2" class="pa-0">
       <v-card color="white" class="pa-6">
         <v-layout row wrap justify-center>
-          <h4 class="mb-2">Deseja confirmar a exclusão?</h4>
+          <h4 class="mb-5 mt-4">Deseja confirmar a exclusão?</h4>
         </v-layout>
         <br />
-        <v-layout row wrap justify-center>
+        <v-layout row wrap justify-center class="mb-2">
           <v-btn
             :loading="loading"
             color="primary darken-1"
             class="mr-5"
-            @click="excluir"
+            @click="remove()"
             >Sim</v-btn
           >
-          <v-btn color="grey lighten-2" @click="fecharDialog">Não</v-btn>
+          <v-btn color="grey lighten-2" @click="closeDialog">Não</v-btn>
         </v-layout>
       </v-card>
     </v-card>
@@ -26,25 +26,25 @@ export default {
   props: {
     dialog: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   data() {
     return {
-      loading: false,
-    };
+      loading: false
+    }
   },
 
   methods: {
-    fecharDialog() {
-      this.$emit("fechar");
+    closeDialog() {
+      this.$emit('close')
     },
 
-    excluir() {
-      this.loading = true;
-      this.$emit("excluir");
-    },
-  },
-};
+    remove() {
+      this.loading = true
+      this.$emit('delete')
+    }
+  }
+}
 </script>

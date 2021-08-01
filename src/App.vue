@@ -1,29 +1,31 @@
 <template>
-  <v-app class="fundo-principal">
+  <v-app class="main-background">
     <v-main>
-      <Desenvolvedores />
+      <Developers />
     </v-main>
+    <Footer />
   </v-app>
 </template>
 
 <script>
-import Desenvolvedores from "./views/Desenvolvedores";
-
+import Developers from './views/Developers'
+import Footer from '@/components/footer'
 export default {
-  name: "App",
+  name: 'App',
 
   components: {
-    Desenvolvedores,
+    Developers,
+    Footer
   },
 
   data: () => ({
     //
-  }),
-};
+  })
+}
 </script>
 
 <style lang="scss">
-.fundo-principal {
-  background-color: #90caf9 !important;
+.main-background {
+  background-color: #eeeeee !important;
 }
 </style>

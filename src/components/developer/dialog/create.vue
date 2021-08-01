@@ -1,46 +1,46 @@
 <template>
   <v-layout row justify-center>
     <v-dialog
-      v-model="abrir"
+      v-model="openDialog"
       persistent
       max-width="400px"
-      @keydown.esc="fechaDialog()"
+      @keydown.esc="closeDialog()"
     >
       <v-card>
         <v-toolbar class="pt-3" flat>
           <h3 class="pl-5">Novo desenvolvedor</h3>
           <v-spacer></v-spacer>
-          <v-btn class="mr-3" small text @click="fechaDialog()">
+          <v-btn class="mr-3" small text @click="closeDialog()">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
         <v-card-text class="py-0">
-          <v-form ref="formCadastroDesenvolvedor" lazy-validation>
+          <v-form ref="formDeveloperRegister" lazy-validation>
             <v-container>
               <v-row dense>
                 <v-col cols="12" sm="12" md="12">
                   <v-text-field
-                    v-model="nome"
+                    v-model="name"
                     label="Nome *"
                     dense
                     outlined
-                    :rules="rulesCampos"
+                    :rules="rulesField"
                     required
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="12" md="12">
-                  <v-radio-group v-model="sexo" row mandatory class="mt-n2">
+                  <v-radio-group v-model="sex" row mandatory class="mt-n2">
                     <v-radio label="Masculino" value="M"></v-radio>
                     <v-radio label="Feminino" value="F"></v-radio>
                   </v-radio-group>
                 </v-col>
                 <v-col cols="12" sm="12" md="12">
                   <v-text-field
-                    v-model="idade"
-                    label="Idade"
+                    v-model="age"
+                    label="Idade *"
                     dense
                     type="number"
-                    :rules="rulesCampos"
+                    :rules="rulesField"
                     required
                     outlined
                   ></v-text-field>
@@ -56,27 +56,29 @@
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
-                        v-model="formataData"
-                        label="Data de nascimento"
+                        v-model="formatData"
+                        label="Data de nascimento *"
                         outlined
                         dense
+                        :rules="rulesField"
                         v-bind="attrs"
                         v-on="on"
                       ></v-text-field>
                     </template>
                     <v-date-picker
-                      v-model="datanascimento"
+                      v-model="birthdate"
                       @input="menu_data = false"
                     ></v-date-picker>
                   </v-menu>
                 </v-col>
                 <v-col cols="12" sm="12" md="12">
-                  <v-textarea
+                  <v-text-field
                     v-model="hobby"
-                    auto-grow
                     outlined
-                    label="Hobby"
-                  ></v-textarea>
+                    dense
+                    :rules="rulesField"
+                    label="Hobby *"
+                  ></v-text-field>
                 </v-col>
               </v-row>
             </v-container>
@@ -85,7 +87,7 @@
         <v-card-actions class="mx-5 pb-5 mt-n4">
           <small>* Campos obrigatórios</small>
           <v-spacer></v-spacer>
-          <v-btn small outlined :loading="loading" @click="validarDados()">
+          <v-btn small outlined :loading="loading" @click="validData()">
             <v-icon class="mr-1" small>mdi-check</v-icon>Salvar
           </v-btn>
         </v-card-actions>
@@ -107,79 +109,77 @@
 </template>
 
 <script>
-import moment from "moment";
+import moment from 'moment'
 export default {
   props: {
-    abrir: {
+    openDialog: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   data() {
     return {
       snack: false,
-      dialogCriar: false,
-      snackColor: "",
-      snackText: "",
+      snackColor: '',
+      snackText: '',
       menu_data: false,
       loading: false,
-      rulesCampos: [
-        (v) => v != "" || "O campo está vazio!",
-        (v) => v != null || "O campo está vazio!",
+      rulesField: [
+        v => v != '' || 'O campo está vazio!',
+        v => v != null || 'O campo está vazio!'
       ],
-      nome: "",
-      datanascimento: "",
-      idade: null,
-      sexo: "M",
-      hobby: "",
-    };
+      name: '',
+      birthdate: '',
+      age: null,
+      sex: 'M',
+      hobby: ''
+    }
   },
 
   computed: {
-    formataData() {
-      return this.datanascimento
-        ? moment(this.datanascimento).format("DD/MM/YYYY")
-        : "";
-    },
+    formatData() {
+      return this.birthdate ? moment(this.birthdate).format('DD/MM/YYYY') : ''
+    }
   },
 
   methods: {
-    validarDados() {
-      if (this.$refs.formCadastroDesenvolvedor.validate()) {
-        this.loading = true;
-        this.salvarDesenvolvedor();
+    validData() {
+      if (this.$refs.formDeveloperRegister.validate()) {
+        this.loading = true
+        this.saveDeveloper()
       } else {
-        this.criarAlerta("red", "Preencha os campos obrigatórios!");
+        this.alertDeveloper('red', 'Preencha os campos obrigatórios!')
       }
     },
 
-    salvarDesenvolvedor() {
-      const objeto = {
-        nome: this.nome,
-        sexo: this.sexo,
-        idade: this.idade,
-        datanascimento: moment(this.datanascimento).format("YYYY-MM-DD"),
-        hobby: this.hobby,
-      };
-      console.log("objeto", objeto);
-      this.$http
-        .post(`${process.env.VUE_APP_API_URL}developers`, objeto)
-        .then(() => {
-          this.$emit("atualizaArray");
-          this.loading = false;
-        });
+    saveDeveloper() {
+      const developer = {
+        name: this.name,
+        sex: this.sex,
+        age: this.age,
+        birthdate: moment(this.birthdate).format('YYYY-MM-DD'),
+        hobby: this.hobby
+      }
+
+      // this.$http
+      //   .post(`${process.env.VUE_APP_API_URL}developers`, developer)
+      //   .then(() => {
+      this.$store.dispatch('actionCreateDeveloper', developer).then(() => {
+        this.$emit('updateArray')
+        this.loading = false
+      })
     },
 
-    criarAlerta(cor, mensagem) {
-      this.snack = true;
-      this.snackColor = cor;
-      this.snackText = mensagem;
+    alertDeveloper(color, message) {
+      this.snack = true
+      this.snackColor = color
+      this.snackText = message
     },
 
-    fechaDialog() {
-      this.$emit("fechar");
-    },
-  },
-};
+    closeDialog() {
+      this.$emit('close')
+    }
+  }
+}
 </script>
