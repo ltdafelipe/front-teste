@@ -186,11 +186,11 @@ export default {
   },
 
   watch: {
-    age() {
+    'dev.age'() {
       if (this.dev.age < 1) {
         this.alertDeveloper('red', 'Idade somente de 1 até 100 anos.')
         this.dev.age = 1
-      } else if (this.age > 100) {
+      } else if (this.dev.age > 100) {
         this.alertDeveloper('red', 'Idade somente de 1 até 100 anos.')
         this.dev.age = 1
       }
