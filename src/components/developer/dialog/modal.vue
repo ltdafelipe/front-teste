@@ -9,14 +9,14 @@
       <v-card>
         <v-container grid-list-xl fluid>
           <v-toolbar flat>
-            <h3 class="pl-3">Detalhes</h3>
+            <h3 class="pl-3">{{ titleModal }}</h3>
             <v-spacer></v-spacer>
             <v-btn class="mr-3" small outlined @click="closeDialog()">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-toolbar>
           <v-card-text class="py-0">
-            <v-form ref="formDeveloperUpdate" lazy-validation>
+            <v-form ref="formDeveloper" lazy-validation>
               <v-container>
                 <v-row dense>
                   <v-col cols="12" sm="12" md="12">
@@ -43,10 +43,10 @@
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field
                       v-model="dev.age"
-                      label="Idade"
+                      label="Idade *"
                       dense
-                      type="number"
                       :rules="rulesField"
+                      type="number"
                       required
                       outlined
                     ></v-text-field>
@@ -62,18 +62,20 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          v-model="formataData"
-                          label="Data de nascimento"
+                          v-model="formatData"
+                          label="Data de nascimento *"
                           outlined
                           dense
+                          readonly
+                          prepend-inner-icon="mdi-calendar"
                           :rules="rulesField"
                           v-bind="attrs"
                           v-on="on"
-                          @change="formatDate"
                         ></v-text-field>
                       </template>
                       <v-date-picker
                         v-model="dev.birthdate"
+                        locale="pt-br"
                         @input="menu_data = false"
                       ></v-date-picker>
                     </v-menu>
@@ -81,10 +83,10 @@
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field
                       v-model="dev.hobby"
-                      :rules="rulesField"
-                      dense
                       outlined
-                      label="Hobby"
+                      dense
+                      :rules="rulesField"
+                      label="Hobby *"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -94,8 +96,23 @@
           <v-card-actions class="mx-5 pb-5 mt-n4">
             <small>* Campos obrigatórios</small>
             <v-spacer></v-spacer>
-            <v-btn small outlined :loading="loading" @click="validData()">
+            <v-btn
+              v-show="!editMode"
+              small
+              outlined
+              :loading="loading"
+              @click="validData('create')"
+            >
               <v-icon class="mr-1" small>mdi-check</v-icon>Salvar
+            </v-btn>
+            <v-btn
+              v-show="editMode"
+              small
+              outlined
+              :loading="loading"
+              @click="validData('update')"
+            >
+              <v-icon class="mr-1" small>mdi-check</v-icon>Atualizar
             </v-btn>
           </v-card-actions>
         </v-container>
@@ -125,11 +142,20 @@ export default {
       type: Boolean,
       default: false
     },
+    editMode: {
+      type: Boolean,
+      default: null
+    },
+    titleModal: {
+      type: String,
+      default: null
+    },
     developer: {
       type: Object,
       default: null
     }
   },
+
   data() {
     return {
       snack: false,
@@ -138,59 +164,87 @@ export default {
       menu_data: false,
       loading: false,
       rulesField: [
-        v => v != '' || 'O campo está vazio!',
-        v => v != null || 'O campo está vazio!'
+        v => v != '' || 'Campo obrigatório!',
+        v => v != null || 'Campo obrigatório!'
       ],
       dev: {
         name: '',
-        sex: 'M',
-        age: null,
         birthdate: '',
+        age: null,
+        sex: 'M',
         hobby: ''
       }
     }
   },
 
   computed: {
-    formataData() {
+    formatData() {
       return this.dev.birthdate
-        ? moment(this.dev.birthdate, 'YYYY-MM-DD').format('DD/MM/YYYY')
+        ? moment(this.dev.birthdate).format('DD/MM/YYYY')
         : ''
     }
   },
 
+  watch: {
+    age() {
+      if (this.dev.age < 1) {
+        this.alertDeveloper('red', 'Idade somente de 1 até 100 anos.')
+        this.dev.age = 1
+      } else if (this.age > 100) {
+        this.alertDeveloper('red', 'Idade somente de 1 até 100 anos.')
+        this.dev.age = 1
+      }
+    }
+  },
+
   mounted() {
-    this.getDeveloper()
+    if (this.editMode) {
+      this.getDeveloper()
+    }
   },
 
   methods: {
+    getDeveloper() {
+      this.dev = copy(this.developer)
+      this.formatDate()
+    },
+
     formatDate() {
       this.dev.birthdate = moment(this.dev.birthdate, 'YYYY-MM-DD').format(
         'YYYY-MM-DD'
       )
     },
 
-    getDeveloper() {
-      this.dev = copy(this.developer)
-      this.formatDate()
-    },
-
-    closeDialog() {
-      this.$emit('close')
-    },
-
-    validData() {
-      if (this.$refs.formDeveloperUpdate.validate()) {
+    validData(mode) {
+      if (this.$refs.formDeveloper.validate()) {
         this.loading = true
-        this.updateDeveloper()
+        if (mode === 'create') {
+          this.saveDeveloper()
+        } else {
+          this.updateDeveloper()
+        }
       } else {
         this.alertDeveloper('red', 'Preencha os campos obrigatórios!')
       }
     },
 
+    saveDeveloper() {
+      const developer = {
+        name: this.dev.name,
+        sex: this.dev.sex,
+        age: this.dev.age,
+        birthdate: moment(this.dev.birthdate).format('YYYY-MM-DD'),
+        hobby: this.dev.hobby
+      }
+      this.$store.dispatch('actionCreateDeveloper', developer).then(() => {
+        this.$emit('updateArray', 'create')
+        this.loading = false
+      })
+    },
+
     updateDeveloper() {
       this.$store.dispatch('actionUpdateDeveloper', this.dev).then(() => {
-        this.$emit('updateEditArray')
+        this.$emit('updateArray', 'update')
         this.loading = false
       })
     },
@@ -199,6 +253,10 @@ export default {
       this.snack = true
       this.snackColor = color
       this.snackText = message
+    },
+
+    closeDialog() {
+      this.$emit('close')
     }
   }
 }

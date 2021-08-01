@@ -24,13 +24,11 @@ const actions = {
 
   actionCreateDeveloper: async ({ commit }, data) => {
     const developer = await developerService.createDeveloper(data)
-    console.log('developer a', developer)
     await commit('saveDeveloper', developer)
   },
 
   actionUpdateDeveloper: async ({ commit }, data) => {
     const developer = await developerService.updateDeveloper(data)
-    console.log('developer update', developer)
     await commit('updateDeveloper', developer)
   },
 

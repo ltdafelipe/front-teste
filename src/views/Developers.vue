@@ -5,7 +5,7 @@
         <v-card color="white">
           <v-container grid-list-xl fluid>
             <v-layout row>
-              <v-flex xs12 sm6 md8 lg9 xl11>
+              <v-flex xs8 sm6 md8 lg11 xl11>
                 <v-text-field
                   v-model="search"
                   hide-details
@@ -15,7 +15,7 @@
                   prepend-inner-icon="mdi-magnify"
                 ></v-text-field>
               </v-flex>
-              <v-flex xl1 class="justify-end d-flex">
+              <v-flex xl1 lg1 class="justify-end d-flex">
                 <v-btn color="primary" @click="createNewDeveloper()">
                   <v-icon small dark>mdi-plus</v-icon>
                 </v-btn>
@@ -44,7 +44,7 @@
                     {{ item.birthdate | data }}
                   </template>
                   <template v-slot:item.acao="{ item }">
-                    <v-icon class="mr-2" @click="editDeveloper(item)">
+                    <v-icon class="mr-3" @click="editDeveloper(item)">
                       mdi-pencil
                     </v-icon>
                     <v-icon color="red" @click="deleteDeveloper(item)">
@@ -89,18 +89,14 @@
         </template>
       </v-snackbar>
     </v-row>
-    <dialog-create
-      v-if="openDialogCreate"
-      :open-dialog="openDialogCreate"
-      @updateArray="updateArray"
-      @close="closeCreateDialog"
-    />
-    <dialog-update
-      v-if="openDialogUpdate"
-      :open-dialog="openDialogUpdate"
+    <modal
+      v-if="openModal"
+      :open-dialog="openModal"
+      :title-modal="titleModal"
+      :edit-mode="editMode"
       :developer="emitDeveloper"
-      @updateEditArray="updateEditArray"
-      @close="closeUpdateDialog"
+      @updateArray="updateArray"
+      @close="closeModal"
     />
     <dialog-delete
       v-if="deleteDialog"
@@ -112,21 +108,18 @@
 </template>
 
 <script>
-import dialogCreate from '@/components/developer/dialog/create'
-import dialogUpdate from '@/components/developer/dialog/update'
+import modal from '@/components/developer/dialog/modal'
 import dialogDelete from '@/components/developer/dialog/delete'
 import { mapGetters } from 'vuex'
 export default {
   components: {
-    'dialog-create': dialogCreate,
-    'dialog-update': dialogUpdate,
+    modal: modal,
     'dialog-delete': dialogDelete
   },
 
   data() {
     return {
-      openDialogCreate: false,
-      openDialogUpdate: false,
+      openModal: false,
       deleteDialog: false,
       itemRemove: null,
       page: 1,
@@ -138,6 +131,7 @@ export default {
       snackText: '',
       arrayDevelopers: [],
       loaderTable: false,
+      emitDeveloper: {},
       headers: [
         {
           text: 'Nome',
@@ -208,33 +202,31 @@ export default {
     },
 
     createNewDeveloper() {
-      this.openDialogCreate = true
+      this.editMode = false
+      this.titleModal = 'Novo'
+      this.openModal = true
     },
 
     editDeveloper(item) {
+      this.editMode = true
+      this.titleModal = 'Detalhes'
       this.emitDeveloper = item
-      this.openDialogUpdate = true
+      this.openModal = true
     },
 
-    closeCreateDialog() {
+    closeModal() {
       this.getDevelopers()
-      this.openDialogCreate = false
+      this.openModal = false
     },
 
-    closeUpdateDialog() {
-      this.getDevelopers()
-      this.openDialogUpdate = false
-    },
+    updateArray(mode) {
+      if (mode === 'create') {
+        this.alertDeveloper('success', 'Desenvolvedor cadastrado com sucesso!')
+      } else {
+        this.alertDeveloper('success', 'Desenvolvedor atualizado com sucesso!')
+      }
 
-    updateEditArray() {
-      this.alertDeveloper('success', 'Desenvolvedor atualizado com sucesso!')
-      this.openDialogUpdate = false
-      this.getDevelopers()
-    },
-
-    updateArray() {
-      this.alertDeveloper('success', 'Desenvolvedor cadastrado com sucesso!')
-      this.openDialogCreate = false
+      this.openModal = false
       this.getDevelopers()
     },
 
