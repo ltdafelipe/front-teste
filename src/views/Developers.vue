@@ -2,10 +2,13 @@
   <v-container>
     <v-row align="center" justify="center">
       <v-col cols="12" class="mt-12">
+        <v-layout class="mb-5 mt-n2" justify-center>
+          <h3 style="color: #1976d2">Desenvolvedores</h3>
+        </v-layout>
         <v-card color="white">
           <v-container grid-list-xl fluid>
             <v-layout row>
-              <v-flex xs8 sm6 md8 lg11 xl11>
+              <v-flex xs8 sm10 md10 lg11 xl11>
                 <v-text-field
                   v-model="search"
                   hide-details
@@ -15,7 +18,7 @@
                   prepend-inner-icon="mdi-magnify"
                 ></v-text-field>
               </v-flex>
-              <v-flex xl1 lg1 class="justify-end d-flex">
+              <v-flex xl1 lg1 sm2 md2 class="justify-end d-flex">
                 <v-btn color="primary" @click="createNewDeveloper()">
                   <v-icon small dark>mdi-plus</v-icon>
                 </v-btn>

@@ -1,6 +1,10 @@
 import axios from 'axios'
 import moment from 'moment'
-
+import { createToastInterface } from 'vue-toastification'
+const pluginOptions = {
+  timeout: 4000
+}
+const toast = createToastInterface(pluginOptions)
 export default {
   async findAllDeveloper(devData) {
     return await axios
@@ -13,6 +17,11 @@ export default {
       .then(res => {
         return res.data
       })
+      .catch(err => {
+        if (err.message === 'Network Error') {
+          toast.error('Erro de conexão!', { position: 'bottom-right' })
+        }
+      })
   },
 
   async createDeveloper(devData) {
@@ -20,6 +29,11 @@ export default {
       .post(`${process.env.VUE_APP_API_URL}developers`, devData)
       .then(res => {
         return res.data
+      })
+      .catch(err => {
+        if (err.message === 'Network Error') {
+          toast.error('Erro de conexão!', { position: 'bottom-right' })
+        }
       })
   },
 
@@ -36,9 +50,20 @@ export default {
       .then(res => {
         return res.data
       })
+      .catch(err => {
+        if (err.message === 'Network Error') {
+          toast.error('Erro de conexão!', { position: 'bottom-right' })
+        }
+      })
   },
 
   async deleteDeveloper(id) {
-    return await axios.delete(`${process.env.VUE_APP_API_URL}developers/` + id)
+    return await axios
+      .delete(`${process.env.VUE_APP_API_URL}developers/` + id)
+      .catch(err => {
+        if (err.message === 'Network Error') {
+          toast.error('Erro de conexão!', { position: 'bottom-right' })
+        }
+      })
   }
 }
