@@ -76,21 +76,6 @@
           </v-container>
         </v-card>
       </v-col>
-
-      <v-snackbar
-        v-model="snack"
-        bottom
-        right
-        :timeout="3000"
-        :color="snackColor"
-      >
-        {{ snackText }}
-        <template v-slot:action="{ attrs }">
-          <v-btn dark text v-bind="attrs" @click="snack = false">
-            Fechar
-          </v-btn>
-        </template>
-      </v-snackbar>
     </v-row>
     <modal
       v-if="openModal"
@@ -129,9 +114,6 @@ export default {
       countPages: 0,
       limit: 5,
       search: '',
-      snack: false,
-      snackColor: '',
-      snackText: '',
       arrayDevelopers: [],
       loaderTable: false,
       emitDeveloper: {},
@@ -224,9 +206,13 @@ export default {
 
     updateArray(mode) {
       if (mode === 'create') {
-        this.alertDeveloper('success', 'Desenvolvedor cadastrado com sucesso!')
+        this.$toast.success('Desenvolvedor cadastrado com sucesso!', {
+          position: 'bottom-right'
+        })
       } else {
-        this.alertDeveloper('success', 'Desenvolvedor atualizado com sucesso!')
+        this.$toast.success('Desenvolvedor atualizado com sucesso!', {
+          position: 'bottom-right'
+        })
       }
 
       this.openModal = false
@@ -246,16 +232,12 @@ export default {
       this.$store
         .dispatch('actionDeleteDeveloper', this.itemRemove._id)
         .then(() => {
-          this.alertDeveloper('success', 'Desenvolvedor excluído com sucesso!')
+          this.$toast.success('Desenvolvedor excluído com sucesso!', {
+            position: 'bottom-right'
+          })
           this.getDevelopers()
           this.deleteDialog = false
         })
-    },
-
-    alertDeveloper(color, message) {
-      this.snack = true
-      this.snackColor = color
-      this.snackText = message
     }
   }
 }

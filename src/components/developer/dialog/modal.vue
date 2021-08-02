@@ -118,18 +118,6 @@
         </v-container>
       </v-card>
     </v-dialog>
-    <v-snackbar
-      v-model="snack"
-      bottom
-      right
-      :timeout="3000"
-      :color="snackColor"
-    >
-      {{ snackText }}
-      <template v-slot:action="{ attrs }">
-        <v-btn dark text v-bind="attrs" @click="snack = false"> Fechar </v-btn>
-      </template>
-    </v-snackbar>
   </v-layout>
 </template>
 
@@ -158,9 +146,6 @@ export default {
 
   data() {
     return {
-      snack: false,
-      snackColor: '',
-      snackText: '',
       menu_data: false,
       loading: false,
       rulesField: [
@@ -188,10 +173,14 @@ export default {
   watch: {
     'dev.age'() {
       if (this.dev.age < 1) {
-        this.alertDeveloper('red', 'Idade somente de 1 até 100 anos.')
+        this.$toast.warning('Idade somente de 1 até 100 anos!', {
+          position: 'bottom-right'
+        })
         this.dev.age = 1
       } else if (this.dev.age > 100) {
-        this.alertDeveloper('red', 'Idade somente de 1 até 100 anos.')
+        this.$toast.warning('Idade somente de 1 até 100 anos!', {
+          position: 'bottom-right'
+        })
         this.dev.age = 1
       }
     }
@@ -224,7 +213,9 @@ export default {
           this.updateDeveloper()
         }
       } else {
-        this.alertDeveloper('red', 'Preencha os campos obrigatórios!')
+        this.$toast.warning('Preencha os campos obrigatórios!', {
+          position: 'bottom-right'
+        })
       }
     },
 
@@ -247,12 +238,6 @@ export default {
         this.$emit('updateArray', 'update')
         this.loading = false
       })
-    },
-
-    alertDeveloper(color, message) {
-      this.snack = true
-      this.snackColor = color
-      this.snackText = message
     },
 
     closeDialog() {
