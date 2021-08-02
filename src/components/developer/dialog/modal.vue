@@ -70,6 +70,7 @@
                           prepend-inner-icon="mdi-calendar"
                           :rules="rulesField"
                           v-bind="attrs"
+                          @click:prepend-inner="menu_data = true"
                           v-on="on"
                         ></v-text-field>
                       </template>

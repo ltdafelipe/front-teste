@@ -228,6 +228,7 @@ export default {
       this.$store
         .dispatch('actionDeleteDeveloper', this.itemRemove._id)
         .then(() => {
+          this.page = 1
           this.$toast.success('Desenvolvedor excluído com sucesso!')
           this.getDevelopers()
           this.deleteDialog = false
