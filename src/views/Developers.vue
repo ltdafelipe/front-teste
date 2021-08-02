@@ -206,13 +206,9 @@ export default {
 
     updateArray(mode) {
       if (mode === 'create') {
-        this.$toast.success('Desenvolvedor cadastrado com sucesso!', {
-          position: 'bottom-right'
-        })
+        this.$toast.success('Desenvolvedor cadastrado com sucesso!')
       } else {
-        this.$toast.success('Desenvolvedor atualizado com sucesso!', {
-          position: 'bottom-right'
-        })
+        this.$toast.success('Desenvolvedor atualizado com sucesso!')
       }
 
       this.openModal = false
@@ -232,9 +228,7 @@ export default {
       this.$store
         .dispatch('actionDeleteDeveloper', this.itemRemove._id)
         .then(() => {
-          this.$toast.success('Desenvolvedor excluído com sucesso!', {
-            position: 'bottom-right'
-          })
+          this.$toast.success('Desenvolvedor excluído com sucesso!')
           this.getDevelopers()
           this.deleteDialog = false
         })

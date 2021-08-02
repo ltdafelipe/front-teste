@@ -173,14 +173,10 @@ export default {
   watch: {
     'dev.age'() {
       if (this.dev.age < 1) {
-        this.$toast.warning('Idade somente de 1 até 100 anos!', {
-          position: 'bottom-right'
-        })
+        this.$toast.warning('Idade somente de 1 até 100 anos!')
         this.dev.age = 1
       } else if (this.dev.age > 100) {
-        this.$toast.warning('Idade somente de 1 até 100 anos!', {
-          position: 'bottom-right'
-        })
+        this.$toast.warning('Idade somente de 1 até 100 anos!')
         this.dev.age = 1
       }
     }
@@ -213,9 +209,7 @@ export default {
           this.updateDeveloper()
         }
       } else {
-        this.$toast.warning('Preencha os campos obrigatórios!', {
-          position: 'bottom-right'
-        })
+        this.$toast.warning('Preencha os campos obrigatórios!')
       }
     },
 

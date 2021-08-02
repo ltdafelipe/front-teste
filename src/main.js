@@ -11,6 +11,7 @@ import 'vue-toastification/dist/index.css'
 
 Vue.use(Vuelidate)
 const options = {
+  position: 'bottom-right'
   // You can set your default options here
 }
 

@@ -19,7 +19,7 @@ export default {
       })
       .catch(err => {
         if (err.message === 'Network Error') {
-          toast.error('Erro de conexão!', { position: 'bottom-right' })
+          toast.error('Erro de conexão!')
         }
       })
   },
@@ -32,7 +32,7 @@ export default {
       })
       .catch(err => {
         if (err.message === 'Network Error') {
-          toast.error('Erro de conexão!', { position: 'bottom-right' })
+          toast.error('Erro de conexão!')
         }
       })
   },
@@ -52,7 +52,7 @@ export default {
       })
       .catch(err => {
         if (err.message === 'Network Error') {
-          toast.error('Erro de conexão!', { position: 'bottom-right' })
+          toast.error('Erro de conexão!')
         }
       })
   },
@@ -62,7 +62,7 @@ export default {
       .delete(`${process.env.VUE_APP_API_URL}developers/` + id)
       .catch(err => {
         if (err.message === 'Network Error') {
-          toast.error('Erro de conexão!', { position: 'bottom-right' })
+          toast.error('Erro de conexão!')
         }
       })
   }
