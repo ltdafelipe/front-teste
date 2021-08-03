@@ -22,6 +22,11 @@ const actions = {
     await commit('savePagination', countPages)
   },
 
+  actionGetOneDeveloper: async ({ commit }, id) => {
+    const developer = await developerService.findById(id)
+    await commit('saveDeveloper', developer)
+  },
+
   actionCreateDeveloper: async ({ commit }, data) => {
     const developer = await developerService.createDeveloper(data)
     await commit('saveDeveloper', developer)

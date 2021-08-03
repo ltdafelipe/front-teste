@@ -54,7 +54,7 @@
                   </v-col>
                   <v-col cols="12" sm="12" md="12">
                     <v-menu
-                      v-model="menu_data"
+                      v-model="menuDate"
                       :close-on-content-click="false"
                       :nudge-right="40"
                       transition="scale-transition"
@@ -71,14 +71,14 @@
                           prepend-inner-icon="mdi-calendar"
                           :rules="rulesField"
                           v-bind="attrs"
-                          @click:prepend-inner="menu_data = true"
+                          @click:prepend-inner="menuDate = true"
                           v-on="on"
                         ></v-text-field>
                       </template>
                       <v-date-picker
                         v-model="dev.birthdate"
                         locale="pt-br"
-                        @input="menu_data = false"
+                        @input="menuDate = false"
                       ></v-date-picker>
                     </v-menu>
                   </v-col>
@@ -127,6 +127,7 @@
 <script>
 import moment from 'moment'
 import { copy } from '@/util/copy'
+import { mapGetters } from 'vuex'
 export default {
   props: {
     openDialog: {
@@ -141,15 +142,15 @@ export default {
       type: String,
       default: null
     },
-    developer: {
-      type: Object,
+    idDeveloper: {
+      type: String,
       default: null
     }
   },
 
   data() {
     return {
-      menu_data: false,
+      menuDate: false,
       loading: false,
       rulesField: [
         v => v != '' || 'Campo obrigatório!',
@@ -166,6 +167,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters(['getOneDeveloper']),
     formatData() {
       return this.dev.birthdate
         ? moment(this.dev.birthdate).format('DD/MM/YYYY')
@@ -192,8 +194,12 @@ export default {
   },
 
   methods: {
-    getDeveloper() {
-      this.dev = copy(this.developer)
+    async getDeveloper() {
+      await this.$store
+        .dispatch('actionGetOneDeveloper', this.idDeveloper)
+        .then(() => {
+          this.dev = copy(this.getOneDeveloper)
+        })
       this.formatDate()
     },
 

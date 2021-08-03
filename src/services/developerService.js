@@ -24,6 +24,19 @@ export default {
       })
   },
 
+  async findById(id) {
+    return await axios
+      .get(`${process.env.VUE_APP_API_URL}developers/` + id)
+      .then(res => {
+        return res.data
+      })
+      .catch(err => {
+        if (err.message === 'Network Error') {
+          toast.error('Erro de conexão!')
+        }
+      })
+  },
+
   async createDeveloper(devData) {
     return await axios
       .post(`${process.env.VUE_APP_API_URL}developers`, devData)

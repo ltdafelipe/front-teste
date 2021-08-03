@@ -48,7 +48,7 @@
                     {{ item.birthdate | data }}
                   </template>
                   <template v-slot:item.acao="{ item }">
-                    <v-icon class="mr-3" @click="editDeveloper(item)">
+                    <v-icon class="mr-3" @click="editDeveloper(item._id)">
                       mdi-pencil
                     </v-icon>
                     <v-icon color="red" @click="deleteDeveloper(item)">
@@ -84,7 +84,7 @@
       :open-dialog="openModal"
       :title-modal="titleModal"
       :edit-mode="editMode"
-      :developer="emitDeveloper"
+      :id-developer="emitIdDeveloper"
       @updateArray="updateArray"
       @close="closeModal"
     />
@@ -194,10 +194,10 @@ export default {
       this.openModal = true
     },
 
-    editDeveloper(item) {
+    editDeveloper(id) {
       this.editMode = true
       this.titleModal = 'Detalhes'
-      this.emitDeveloper = item
+      this.emitIdDeveloper = id
       this.openModal = true
     },
 
