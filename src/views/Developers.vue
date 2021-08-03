@@ -36,6 +36,7 @@
                   :headers="headers"
                   :items="arrayDevelopers"
                   :loading="loaderTable"
+                  loading-text="Carregando..."
                   no-data-text="Não há desenvolvedores a serem exibidos"
                   :page.sync="page"
                   hide-default-footer
@@ -69,6 +70,7 @@
                   <v-pagination
                     v-model="page"
                     :length="countPages"
+                    :total-visible="10"
                   ></v-pagination>
                 </div>
               </v-flex>

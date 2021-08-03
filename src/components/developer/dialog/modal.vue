@@ -22,6 +22,7 @@
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field
                       v-model="dev.name"
+                      maxlength="35"
                       label="Nome *"
                       dense
                       outlined
@@ -84,6 +85,7 @@
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field
                       v-model="dev.hobby"
+                      maxlength="35"
                       outlined
                       dense
                       :rules="rulesField"
