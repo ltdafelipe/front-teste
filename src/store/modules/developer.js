@@ -1,5 +1,4 @@
 import developerService from '../../services/developerService'
-import * as types from '../mutation-types'
 
 const state = {
   developers: [],
